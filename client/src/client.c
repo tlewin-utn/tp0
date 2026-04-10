@@ -1,5 +1,4 @@
 #include "client.h"
-
 int main(void)
 {
 	/*---------------------------------------------------PARTE 2-------------------------------------------------------------*/
@@ -13,20 +12,25 @@ int main(void)
 	t_config* config;
 
 	/* ---------------- LOGGING ---------------- */
-
+	
 	logger = iniciar_logger();
-
+	
 	// Usando el logger creado previamente
 	// Escribi: "Hola! Soy un log"
-
-
+	log_info (logger, "Hola soy loger");
+	
 	/* ---------------- ARCHIVOS DE CONFIGURACION ---------------- */
 
 	config = iniciar_config();
-
+	valor = config_get_string_value(config,"CLAVE");
+	ip = config_get_string_value(config,"IP");
+	puerto = config_get_string_value(config,"PUERTO");
+	log_info(logger, "VALOR: %s", valor);
+log_info(logger, "IP: %s", ip);
+log_info(logger, "PUERTO: %s", puerto);
 	// Usando el config creado previamente, leemos los valores del config y los 
 	// dejamos en las variables 'ip', 'puerto' y 'valor'
-
+	
 	// Loggeamos el valor de config
 
 
@@ -47,7 +51,7 @@ int main(void)
 	paquete(conexion);
 
 	terminar_programa(conexion, logger, config);
-
+log_destroy(logger);
 	/*---------------------------------------------------PARTE 5-------------------------------------------------------------*/
 	// Proximamente
 }
@@ -55,14 +59,17 @@ int main(void)
 t_log* iniciar_logger(void)
 {
 	t_log* nuevo_logger;
-
+	nuevo_logger = log_create ("tp0.log", "cliente", true, LOG_LEVEL_INFO  );
 	return nuevo_logger;
 }
 
 t_config* iniciar_config(void)
 {
 	t_config* nuevo_config;
-
+	nuevo_config = config_create("cliente.config");
+	if (nuevo_config == NULL) {
+    exit(EXIT_FAILURE);
+}
 	return nuevo_config;
 }
 
@@ -70,8 +77,19 @@ void leer_consola(t_log* logger)
 {
 	char* leido;
 
+	while (1) {
 	// La primera te la dejo de yapa
 	leido = readline("> ");
+	if (leido == NULL || strcmp(leido, "") == 0){
+			log_info(logger,"%s",leido);
+		free(leido);
+		exit(EXIT_SUCCESS);
+	} else {
+		
+		log_info(logger,"%s",leido);
+		free(leido);
+	}
+	}
 
 	// El resto, las vamos leyendo y logueando hasta recibir un string vacío
 
